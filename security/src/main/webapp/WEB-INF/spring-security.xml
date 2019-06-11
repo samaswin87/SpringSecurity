@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	       http://www.springframework.org/schema/beans/spring-beans.xsd
+	       http://www.springframework.org/schema/security
+	       http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<http auto-config="true">
+		<intercept-url pattern="/login" access="permitAll" />
+        <intercept-url pattern="/logout" access="permitAll" />
+        <intercept-url pattern="/accessdenied" access="permitAll" />
+        <intercept-url pattern="/**" access="isAuthenticated()"/>
+        <form-login login-page="/login" 
+        			login-processing-url="/j_spring_security_check" 
+        			default-target-url="/list" 
+        			username-parameter="username"
+					password-parameter="password"
+        			authentication-failure-url="/accessdenied" />
+        <logout logout-success-url="/logout" invalidate-session="true" logout-url="/logout"/>
+        <!-- enable csrf protection -->
+        <csrf/>
+	</http>
+
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="admin" password="$2a$10$cJODfp8RwbEjEyy23sJcoeugjAy.ebgK0/FEx7cveLCEMZ7rfMuwG" authorities="hasRole(ROLE_ADMIN)" />
+				<user name="user" password="$2a$10$.kfR9nr8BHbtT4arnVcgFuWbP23P4E/nbmwePjLIQx1sTzsmUvyJm" authorities="hasRole(ROLE_USER)" />
+			</user-service>
+			<password-encoder ref="encoder" />
+		</authentication-provider>
+	</authentication-manager>
+
+	<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"> </beans:bean>
+</beans:beans>
